@@ -1,0 +1,13 @@
+{
+    "metadata": {
+      "unit": "number",
+    },
+    "providerSystem": {
+      "address": "192.168.122.101",
+      "port": 7077,
+      "systemName": "AIGym"
+    },
+    "serviceDefinition": "TemperatureAnalysisService",
+    "serviceUri": "/paragraph_1736331837737_1770835919",
+    "version":1                                               ,
+}

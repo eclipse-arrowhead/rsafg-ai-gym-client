@@ -1,0 +1,74 @@
+{
+  "paragraphs": [
+    {
+      "text": "%java\n\nimport at.researchstudio.sdis.ah.AHClientImpl;\nimport at.researchstudio.sdis.ah.DtoModelHelper;\nimport at.researchstudio.sdis.ah.model.*;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n\n    static DtoModelHelper modelHelper \u003d new DtoModelHelper(\"HTTP-INSECURE-JSON\", \"NOT_SECURE\");\n    static AHClientImpl impl \u003d new AHClientImpl(\"192.168.1.100\", 8443, 8445, 8455);\n    static SystemRequestDTO mcSystemDTO \u003d modelHelper.createSystemRequestDTO(\"192.168.1.100\", \"humiditymc\", 80);\n    //published events should be sent to the AHAdapterService for compatibility matters\n    // http://192.168.1.100:7078/zeppelinapi\n    static SystemRequestDTO noteBookSystemDTO \u003d modelHelper.createSystemRequestDTO(\"192.168.1.100\", \"zeppelinapi\", 7078);\n    static String eventType \u003d \"humiditymcevent\";\n    public static void main(String[] args) throws Exception {\n    \n    System.out.println(\"Step 1: Register Microcontroller service (Temperature Humidity Service) \\n\");\n    registerMC();\n    System.out.println(\"Step 2: Register Zeppelin Notebook service (Temeperature Humidity analysis Service to Control the Speed of the Fan) \\n\");\n    long consumerId \u003d registerNotebook();\n    System.out.println(\"Step 3: Request Access Authorization for TemepratureHumidityEvent published by the Microcontroller \\n\");\n    requestAuthorization(consumerId);\n    System.out.println(\"Step 4: subscribe to TemepratureHumidityEvent published by the Microcontroller \\n\");\n    subscribe();\n       //publish();\n    }\n\n    private static void registerMC() throws Exception {\n        ServiceRegistryResponseDTO serviceRegistryResponseDTO \u003d impl.registerService(\n                modelHelper.createServiceRegistryRequestDTO(mcSystemDTO, \"temperaturehumiditysrv\", \"/humidity\"));\n        System.out.println(\"Response from Arrowhead Service Registry \\n\");\n        System.out.println(serviceRegistryResponseDTO.toString());\n    }\n\n    private static long registerNotebook() throws Exception{\n        ServiceRegistryResponseDTO serviceRegistryResponseDTO \u003d impl.registerService(\n                modelHelper.createServiceRegistryRequestDTO(noteBookSystemDTO, \"notebookadaptersrv\", \"/zeppelinapi\"));\n        System.out.println(\"Response from Arrowhead Service Registry \\n\");\n        System.out.println(serviceRegistryResponseDTO.toString());\n        return serviceRegistryResponseDTO.getProvider().getId();\n    }\n\n    private static void requestAuthorization(long consumerId) throws Exception{\n        ServiceRegistryResponseDTO responseDTO \u003d null;\n        ServiceRegistryListResponseDTO l \u003d impl.getAllServices();\n        for (ServiceRegistryResponseDTO dto : l.getData()) {\n            if (dto.getProvider().getSystemName().equalsIgnoreCase(mcSystemDTO.getSystemName())) {\n                responseDTO \u003d dto;\n            }\n        }\n        if (responseDTO !\u003d null) {\n            System.out.println(responseDTO.toString());\n            AuthorizationIntraCloudRequestDTO intraCloudRequestDTO \u003d modelHelper.createAuthorizationIntraCloudRequestDTO(consumerId, responseDTO);\n            AuthorizationResponseDTO authorizationResponseDTO \u003d impl.requestAuthorization(intraCloudRequestDTO);\n            System.out.println(\"Response from Arrowhead Authorization Servcie \\n\");\n            System.out.println(authorizationResponseDTO.toString());\n        }\n\n    }\n\n    private static void subscribe() throws Exception{\n        String response\u003d impl.subscribeEventType(modelHelper.createSubscriptionRequestDTO(\n                eventType,\n                \"/zeppelinapi\",\n                noteBookSystemDTO,\n                mcSystemDTO));\n                System.out.println(\"Service subscribd \\n\");\n    }\n\n    private static void publish() throws Exception{\n\n\n        EventPublishRequestDTO dto \u003d modelHelper.createEventPublishRequestDTO(\n                \"{\\\"params\\\": {\\\"param1\\\": \\\"3900\\\",\\\"param2\\\": \\\"300\\\"}}\",\n                mcSystemDTO,\n                eventType);\n        Map meta \u003d new HashMap();\n        meta.put(\"notifyNoteBook\",\"/api/notebook/run/2KW4VJSHJ/20250528-145246_2000830900\");\n        dto.setMetaData(meta);\n        impl.publishEvent(dto);\n    }\n}",
+      "user": "anonymous",
+      "dateUpdated": "2025-05-29 16:17:35.028",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "java",
+          "editOnDblClick": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/java",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Step 1: Register Microcontroller service (Temperature Humidity Service) \n\nResponse from Arrowhead Service Registry \n\n{\"id\":38,\"serviceDefinition\":{\"id\":34,\"serviceDefinition\":\"temperaturehumiditysrv\",\"createdAt\":\"2025-05-29T16:17:35.211715583Z\",\"updatedAt\":\"2025-05-29T16:17:35.211715583Z\"},\"provider\":{\"id\":11,\"systemName\":\"humiditymc\",\"address\":\"192.168.1.100\",\"port\":80,\"createdAt\":\"2025-05-28T17:32:55Z\",\"updatedAt\":\"2025-05-28T17:32:55Z\"},\"serviceUri\":\"/humidity\",\"secure\":\"NOT_SECURE\",\"version\":1,\"interfaces\":[{\"id\":2,\"interfaceName\":\"HTTP-INSECURE-JSON\",\"createdAt\":\"2025-05-28T09:25:24Z\",\"updatedAt\":\"2025-05-28T09:25:24Z\"}],\"createdAt\":\"2025-05-29T16:17:35.218374449Z\",\"updatedAt\":\"2025-05-29T16:17:35.218374449Z\"}\nStep 2: Register Zeppelin Notebook service (Temeperature Humidity analysis Service to Control the Speed of the Fan) \n\nResponse from Arrowhead Service Registry \n\n{\"id\":39,\"serviceDefinition\":{\"id\":35,\"serviceDefinition\":\"notebookadaptersrv\",\"createdAt\":\"2025-05-29T16:17:35.255540418Z\",\"updatedAt\":\"2025-05-29T16:17:35.255540418Z\"},\"provider\":{\"id\":13,\"systemName\":\"zeppelinapi\",\"address\":\"192.168.1.100\",\"port\":7078,\"createdAt\":\"2025-05-28T19:47:57Z\",\"updatedAt\":\"2025-05-28T19:47:57Z\"},\"serviceUri\":\"/zeppelinapi\",\"secure\":\"NOT_SECURE\",\"version\":1,\"interfaces\":[{\"id\":2,\"interfaceName\":\"HTTP-INSECURE-JSON\",\"createdAt\":\"2025-05-28T09:25:24Z\",\"updatedAt\":\"2025-05-28T09:25:24Z\"}],\"createdAt\":\"2025-05-29T16:17:35.260827380Z\",\"updatedAt\":\"2025-05-29T16:17:35.260827380Z\"}\nStep 3: Request Access Authorization for TemepratureHumidityEvent published by the Microcontroller \n\n{\"id\":38,\"serviceDefinition\":{\"id\":34,\"serviceDefinition\":\"temperaturehumiditysrv\",\"createdAt\":\"2025-05-29T16:17:35Z\",\"updatedAt\":\"2025-05-29T16:17:35Z\"},\"provider\":{\"id\":11,\"systemName\":\"humiditymc\",\"address\":\"192.168.1.100\",\"port\":80,\"createdAt\":\"2025-05-28T17:32:55Z\",\"updatedAt\":\"2025-05-28T17:32:55Z\"},\"serviceUri\":\"/humidity\",\"secure\":\"NOT_SECURE\",\"version\":1,\"interfaces\":[{\"id\":2,\"interfaceName\":\"HTTP-INSECURE-JSON\",\"createdAt\":\"2025-05-28T09:25:24Z\",\"updatedAt\":\"2025-05-28T09:25:24Z\"}],\"createdAt\":\"2025-05-29T16:17:35Z\",\"updatedAt\":\"2025-05-29T16:17:35Z\"}\nResponse from Arrowhead Authorization Servcie \n\n{\"data\":[{\"id\":7,\"consumerSystem\":{\"id\":13,\"systemName\":\"zeppelinapi\",\"address\":\"192.168.1.100\",\"port\":7078,\"createdAt\":\"2025-05-28T19:47:57Z\",\"updatedAt\":\"2025-05-28T19:47:57Z\"},\"providerSystem\":{\"id\":11,\"systemName\":\"humiditymc\",\"address\":\"192.168.1.100\",\"port\":80,\"createdAt\":\"2025-05-28T17:32:55Z\",\"updatedAt\":\"2025-05-28T17:32:55Z\"},\"serviceDefinition\":{\"id\":34,\"serviceDefinition\":\"temperaturehumiditysrv\",\"createdAt\":\"2025-05-29T16:17:35Z\",\"updatedAt\":\"2025-05-29T16:17:35Z\"},\"interfaces\":[{\"id\":2,\"interfaceName\":\"HTTP-INSECURE-JSON\",\"createdAt\":\"2025-05-28T09:25:24Z\",\"updatedAt\":\"2025-05-28T09:25:24Z\"}],\"createdAt\":\"2025-05-29T16:17:35.386594961Z\",\"updatedAt\":\"2025-05-29T16:17:35.386594961Z\"}],\"count\":1}\nStep 4: subscribe to TemepratureHumidityEvent published by the Microcontroller \n\nService subscribd \n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1736331837737_1770835919",
+      "id": "paragraph_1736331837737_1770835919",
+      "dateCreated": "2025-01-08 10:23:57.737",
+      "dateStarted": "2025-05-29 16:17:35.051",
+      "dateFinished": "2025-05-29 16:17:35.492",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%java\n",
+      "user": "anonymous",
+      "dateUpdated": "2025-01-08 10:24:10.687",
+      "progress": 0,
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1736331850686_433172857",
+      "id": "paragraph_1736331850686_433172857",
+      "dateCreated": "2025-01-08 10:24:10.687",
+      "status": "READY"
+    }
+  ],
+  "name": "java-test",
+  "id": "2KJ8J76MK",
+  "defaultInterpreterGroup": "java",
+  "version": "0.11.2",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {
+    "isRunning": false
+  }
+}
