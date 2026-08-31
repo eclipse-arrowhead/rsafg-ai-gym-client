@@ -1,0 +1,220 @@
+{
+  "paragraphs": [
+    {
+      "text": "%java\n\nimport at.researchstudio.sdis.ah.AHClientImpl;\nimport at.researchstudio.sdis.ah.DtoModelHelper;\nimport at.researchstudio.sdis.ah.model.*;\n\nimport java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\nimport java.util.HashMap;\nimport java.util.Map;\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\n\n\npublic class AnomalyDetector {\n\n    public static void main(String[] args) throws ExecutionException, InterruptedException {\n        System.out.println(detect(100));\n        llmService(\"{}\") ;\n    }\n    \n    private static String detect(int measure){\n        if (measure \u003e 8){\n            return \"{\\\"result\\\": \\\"true\\\"}\";\n        }\n        return \"{\\\"result\\\": \\\"false\\\"}\";\n    }\n    \n    private static void llmService(String requestStr) throws ExecutionException, InterruptedException {\n        HttpClient client;\n        client \u003d HttpClient.newHttpClient();\n        HttpRequest request \u003d HttpRequest.newBuilder()\n                .uri(URI.create(\"http://192.168.122.96:8000/generate\"))\n                .header(\"Content-Type\", \"application/json\")\n                .POST(HttpRequest.BodyPublishers.ofString(requestStr))\n                .build();\n        CompletableFuture\u003cHttpResponse\u003cString\u003e\u003e responseFuture \u003d client.sendAsync(request, HttpResponse.BodyHandlers.ofString());\n        HttpResponse\u003cString\u003e res \u003d responseFuture.get();\n    }\n}\n",
+      "user": "anonymous",
+      "dateUpdated": "2025-06-03 07:35:56.511",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "java",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/java",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1748443966560_927144439",
+      "id": "20250528-145246_1654606296",
+      "dateCreated": "2025-05-28 14:52:46.560",
+      "dateStarted": "2025-06-03 07:35:56.533",
+      "dateFinished": "2025-06-03 07:36:02.527",
+      "status": "ERROR"
+    },
+    {
+      "text": "\n%java\n\nimport java.util.HashMap;\nimport java.util.Map;\nimport org.apache.zeppelin.java.JavaInterpreterUtils;\n\npublic class FanControllModel {\n\n    public static void main(String[] args) {\n    System.out.println(\"Temperature: \" + Double.valueOf(\"${temperature}\"));\n    System.out.println(\"Humidity: \" + Double.valueOf(\"${humidity}\"));\n    fanControlModel1(Double.valueOf(\"${temperature}\"),Double.valueOf(\"${humidity}\"));\n    }\n    \n    private static String fanControlModel1(double temperature, double humidity){\n        return processModel1(temperature, humidity);\n    }\n    \n    private static String processModel1(double temperature, double humidity){\n       if (temperature \u003c\u003d 24.0 \u0026\u0026 humidity \u003e 60.0){\n           return \"{\\\"action\\\": \\\"increase fan speed\\\"}\";\n       } \n       return \"{\\\"action\\\": \\\"decrease fan speed\\\"}\";\n    }\n}\n",
+      "user": "anonymous",
+      "dateUpdated": "2025-06-05 10:44:06.482",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "java",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "editorMode": "ace/mode/java",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {
+          "temperature": "23.00",
+          "humidity": "58.00"
+        },
+        "forms": {
+          "temperature": {
+            "type": "TextBox",
+            "name": "temperature",
+            "displayName": "temperature",
+            "hidden": false
+          },
+          "humidity": {
+            "type": "TextBox",
+            "name": "humidity",
+            "displayName": "humidity",
+            "hidden": false
+          }
+        }
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Temperature: 23.0\nHumidity: 58.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1748443966562_1499795428",
+      "id": "20250528-145246_2000830900",
+      "dateCreated": "2025-05-28 14:52:46.562",
+      "dateStarted": "2025-06-05 10:44:06.509",
+      "dateFinished": "2025-06-05 10:44:06.598",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%java\n\n\nimport java.util.HashMap;\nimport java.util.Map;\nimport org.apache.zeppelin.java.JavaInterpreterUtils;\nimport com.google.gson.Gson;\n\npublic class FanControllModel {\n\n    Gson gson \u003d new Gson();\n    \n    public static void main(String[] args) {\n    \n    gson.fromJson(\"${metaData}\",String.class);\n    System.out.println(\"EventType: \" + \"${eventType}\");\n    System.out.println(\"timeStamp: \" + \"${timeStamp}\");\n    System.out.println(\"timeStamp: \" + \"t\");\n    //System.out.println(\"EventType: \" + gson.toJson(\"${source}\"));\n    //System.out.println(\"EventType: \" + \"gson.toJson(${metaData}\"));\n    //System.out.println(\"EventType: \" + \"${payload}\");\n    //System.out.println(\"EventType: \" + \"${timeStamp}\");\n    }\n    \n}\n",
+      "user": "anonymous",
+      "dateUpdated": "2025-06-05 14:37:52.619",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "java",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/java",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true,
+        "editorHide": false
+      },
+      "settings": {
+        "params": {
+          "eventType": "humiditymcevent",
+          "payload": "{\"params\": {\"param1\": \"333\",\"param2\": \"333\"}}",
+          "timeStamp": "2025-05-29T10:10:44.898Z",
+          "metaData": {
+            "notifyNoteBook": "/api/notebook/run/2KW4VJSHJ/20250528-145246_2000830900"
+          }
+        },
+        "forms": {
+          "metaData": {
+            "type": "TextBox",
+            "name": "metaData",
+            "displayName": "metaData",
+            "hidden": false
+          },
+          "eventType": {
+            "type": "TextBox",
+            "name": "eventType",
+            "displayName": "eventType",
+            "hidden": false
+          },
+          "timeStamp": {
+            "type": "TextBox",
+            "name": "timeStamp",
+            "displayName": "timeStamp",
+            "hidden": false
+          },
+          "source": {
+            "type": "TextBox",
+            "name": "source",
+            "displayName": "source",
+            "hidden": false
+          },
+          "payload": {
+            "type": "TextBox",
+            "name": "payload",
+            "displayName": "payload",
+            "hidden": false
+          }
+        }
+      },
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "java.lang.ClassCastException: class com.google.gson.internal.LinkedTreeMap cannot be cast to class java.lang.String (com.google.gson.internal.LinkedTreeMap is in unnamed module of loader \u0027app\u0027; java.lang.String is in module java.base of loader \u0027bootstrap\u0027)\n\tat org.apache.zeppelin.display.Input.getSimpleQuery(Input.java:376)\n\tat org.apache.zeppelin.notebook.Paragraph.jobRun(Paragraph.java:451)\n\tat org.apache.zeppelin.notebook.Paragraph.jobRun(Paragraph.java:68)\n\tat org.apache.zeppelin.scheduler.Job.run(Job.java:186)\n\tat org.apache.zeppelin.scheduler.AbstractScheduler.runJob(AbstractScheduler.java:135)\n\tat org.apache.zeppelin.scheduler.RemoteScheduler$JobRunner.run(RemoteScheduler.java:186)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)\n\tat java.base/java.lang.Thread.run(Thread.java:829)\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1748444069007_11939191",
+      "id": "paragraph_1748444069007_11939191",
+      "dateCreated": "2025-05-28 14:54:29.008",
+      "dateStarted": "2025-06-05 14:37:52.634",
+      "dateFinished": "2025-06-05 14:37:52.635",
+      "status": "ERROR"
+    },
+    {
+      "text": "%java\n",
+      "user": "anonymous",
+      "dateUpdated": "2025-05-30 08:21:22.141",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "java",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/java",
+        "fontSize": 9.0,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1748516820431_2074707875",
+      "id": "paragraph_1748516820431_2074707875",
+      "dateCreated": "2025-05-29 11:07:00.432",
+      "status": "READY"
+    }
+  ],
+  "name": "Note converted from Jupyter_2KWW6DV6P",
+  "id": "2KW4VJSHJ",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.11.2",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {
+    "isRunning": false
+  }
+}

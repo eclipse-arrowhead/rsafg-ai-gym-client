@@ -1,0 +1,15 @@
+  {
+    "metadata": {
+      "unit": "[UNIT]",
+      "temperature": "[TEMPERATURE_READING]"
+    },
+    "providerSystem": {
+      "address": "[ZEPPELIN_HOST_IP_ADDRESS]",
+      "port": "[PORT_NUMBER]",
+      "systemName": "[SYSTEM_NAME]"
+    },
+    "serviceDefinition": "[SERVICE_NAME]",
+    "serviceUri": "[ZEPPELIN_PARAGRAPH_NUMBER]",
+    "version": "[SERVICE_VERSION]"
+  }
+
